@@ -1,0 +1,424 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medicine Analyzer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.css" rel="stylesheet" />
+    <link href="./output.css" rel="stylesheet">
+    <link rel="icon" href="{{ url_for('static', filename='images/team-logo.jpg') }}" type="image/jpg">
+
+</head>
+
+<body class="bg-gray-100">
+    <!--header-->
+    <header class="p-4 dark:bg-gray-100 dark:text-gray-800">
+        <div class="container flex justify-between h-16 mx-auto">
+            <a rel="noopener noreferrer" href="/" aria-label="Back to homepage" class="flex items-center p-2">
+                <img src="https://i.ibb.co/F8c6pYJ/team-logo.jpg" alt="team-logo"
+                    class="w-[80px] h-25 rounded-full mt-6" />
+            </a>
+            <ul class="hidden space-x-3 md:flex">
+                <li class="flex">
+                    <a rel="noopener noreferrer" href="why-us" class="flex items-center px-4">Why Us</a>
+                </li>
+                <li class="flex">
+                    <a rel="noopener noreferrer" href="contact" class="flex items-center px-4">Contact Us</a>
+                </li>
+            </ul>
+            <button class="flex justify-end p-4 md:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl mt-[30px]">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-2xl font-bold mb-6">Medicine Analyzer</h1>
+
+            <!-- Image Input Section -->
+            <div class="mb-6">
+                <h2 class="text-lg font-semibold mb-4">Upload or Take Picture</h2>
+
+                <!-- Camera Section -->
+                <div class="mb-4">
+                    <button id="startCamera" class="bg-blue-500 text-white px-4 py-2 rounded-full mr-2 hover:bg-blue-600  transition-transform transform hover:scale-105">
+                        Start Camera
+                    </button>
+                    <button id="captureImage" class="bg-green-500 text-white px-4 py-2 rounded-full mr-2 hover:bg-green-600  transition-transform transform hover:scale-105"
+                        disabled>
+                        Capture
+                    </button>
+                    <button id="stopCamera" class="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600  transition-transform transform hover:scale-105" disabled>
+                        Stop Camera
+                    </button>
+                </div>
+
+                <video id="video" class="w-full max-w-xl mx-auto hidden border rounded-lg mb-4"></video>
+                <canvas id="canvas" class="hidden"></canvas>
+
+                <!-- File Upload -->
+                <div class="flex items-center justify-center w-full mb-4">
+                    <label
+                        class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-500">
+                                <span class="font-semibold">Click to upload</span> or drag and
+                                drop
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                PNG, JPG or JPEG (MAX. 16MB)
+                            </p>
+                        </div>
+                        <input id="fileInput" type="file" class="hidden" accept="image/*" />
+                    </label>
+                </div>
+
+                <!-- Preview Section -->
+                <div id="imagePreview" class="hidden w-full max-w-xl mx-auto mb-4">
+                    <img id="preview" class="w-full rounded-lg border" alt="Preview" />
+                </div>
+            </div>
+
+            <!-- Medicine Name Input -->
+            <div class="flex justify-center">
+                <h1 class="font-extrabold">OR</h1>
+            </div>
+            <div class="mb-6">
+                <label for="medicineName" class="block text-sm font-medium text-gray-700 mb-2">
+                    Enter Medicine Name
+                </label>
+                <input type="text" id="medicineName"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Enter medicine name" />
+            </div>
+
+            <!-- Submit Button -->
+             <div class="flex justify-center">
+                <button id="analyzeButton"
+                class="w-56 bg-blue-500 rounded-full text-white px-4 py-2 hover:bg-blue-600 disabled:opacity-50  transition-transform transform hover:scale-105">
+                Get Details
+            </button>
+        </div>
+            
+
+            <!-- Loading Indicator -->
+            <div id="loadingIndicator" class="hidden mt-4">
+                <div class="flex items-center justify-center">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                    <span class="ml-2">Analyzing...</span>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded"></div>
+
+            <!-- Results Section -->
+
+            <!-- Results Section with Voice Controls -->
+            <div id="resultsSection" class="hidden mt-6 p-4 bg-gray-50 rounded-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Analysis Results</h2>
+                    <div class="flex items-center space-x-4">
+                        <!-- Voice controls container -->
+                        <div id="voiceControlsContainer"></div>
+
+                        <button id="speakButton"
+                            class="flex items-center space-x-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span id="speakButtonText">Read Analysis</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="medicineInfo" class="prose max-w-none"></div>
+            </div>
+
+
+            <!--footer-->
+            <footer class="flex justify-center mt-[40px]">
+                <div class="space-y-3">
+                    <div class="uppercase dark:text-gray-900">Social media</div>
+                    <div class="flex justify-start space-x-3">
+                        <a rel="noopener noreferrer" href="http://linkedin.com/in/spherehive" title="Facebook"
+                            class="flex items-center p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="#000000" class="w-8 h-8 fill-current"
+                                viewBox="-5.5 0 32 32" version="1.1">
+                                <title>linkedin</title>
+                                <path
+                                    d="M0 8.219v15.563c0 1.469 1.156 2.625 2.625 2.625h15.563c0.719 0 1.406-0.344 1.844-0.781 0.469-0.469 0.781-1.063 0.781-1.844v-15.563c0-1.469-1.156-2.625-2.625-2.625h-15.563c-0.781 0-1.375 0.313-1.844 0.781-0.438 0.438-0.781 1.125-0.781 1.844zM2.813 10.281c0-1 0.813-1.875 1.813-1.875 1.031 0 1.875 0.875 1.875 1.875 0 1.031-0.844 1.844-1.875 1.844-1 0-1.813-0.813-1.813-1.844zM7.844 23.125v-9.531c0-0.219 0.219-0.406 0.375-0.406h2.656c0.375 0 0.375 0.438 0.375 0.719 0.75-0.75 1.719-0.938 2.719-0.938 2.438 0 4 1.156 4 3.719v6.438c0 0.219-0.188 0.406-0.375 0.406h-2.75c-0.219 0-0.375-0.219-0.375-0.406v-5.813c0-0.969-0.281-1.5-1.375-1.5-1.375 0-1.719 0.906-1.719 2.125v5.188c0 0.219-0.219 0.406-0.438 0.406h-2.719c-0.156 0-0.375-0.219-0.375-0.406zM2.875 23.125v-9.531c0-0.219 0.219-0.406 0.375-0.406h2.719c0.25 0 0.406 0.156 0.406 0.406v9.531c0 0.219-0.188 0.406-0.406 0.406h-2.719c-0.188 0-0.375-0.219-0.375-0.406z" />
+                            </svg>
+                        </a>
+                        <a rel="noopener noreferrer" href="http://youtube.com/spherehive" title="YouTube"
+                            class="flex items-center p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                class="w-7 h-7 fill-current" viewBox="0 -3 20 20" version="1.1">
+                                <title>youtube [#168]</title>
+                                <desc>Created with Sketch.</desc>
+                                <defs></defs>
+                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <g id="Dribbble-Light-Preview" transform="translate(-300.000000, -7442.000000)"
+                                        fill="#000000">
+                                        <g id="icons" transform="translate(56.000000, 160.000000)">
+                                            <path
+                                                d="M251.988432,7291.58588 L251.988432,7285.97425 C253.980638,7286.91168 255.523602,7287.8172 257.348463,7288.79353 C255.843351,7289.62824 253.980638,7290.56468 251.988432,7291.58588 M263.090998,7283.18289 C262.747343,7282.73013 262.161634,7282.37809 261.538073,7282.26141 C259.705243,7281.91336 248.270974,7281.91237 246.439141,7282.26141 C245.939097,7282.35515 245.493839,7282.58153 245.111335,7282.93357 C243.49964,7284.42947 244.004664,7292.45151 244.393145,7293.75096 C244.556505,7294.31342 244.767679,7294.71931 245.033639,7294.98558 C245.376298,7295.33761 245.845463,7295.57995 246.384355,7295.68865 C247.893451,7296.0008 255.668037,7296.17532 261.506198,7295.73552 C262.044094,7295.64178 262.520231,7295.39147 262.895762,7295.02447 C264.385932,7293.53455 264.28433,7285.06174 263.090998,7283.18289"
+                                                id="youtube-[#168]"></path>
+                                        </g>
+                                    </g>
+                                </g>
+                            </svg>
+                        </a>
+                        <a rel="noopener noreferrer" href="http://instagram.com/spherehive" title="Instagram"
+                            class="flex items-center p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="currentColor"
+                                class="w-5 h-5 fill-current">
+                                <path
+                                    d="M16 0c-4.349 0-4.891 0.021-6.593 0.093-1.709 0.084-2.865 0.349-3.885 0.745-1.052 0.412-1.948 0.959-2.833 1.849-0.891 0.885-1.443 1.781-1.849 2.833-0.396 1.020-0.661 2.176-0.745 3.885-0.077 1.703-0.093 2.244-0.093 6.593s0.021 4.891 0.093 6.593c0.084 1.704 0.349 2.865 0.745 3.885 0.412 1.052 0.959 1.948 1.849 2.833 0.885 0.891 1.781 1.443 2.833 1.849 1.020 0.391 2.181 0.661 3.885 0.745 1.703 0.077 2.244 0.093 6.593 0.093s4.891-0.021 6.593-0.093c1.704-0.084 2.865-0.355 3.885-0.745 1.052-0.412 1.948-0.959 2.833-1.849 0.891-0.885 1.443-1.776 1.849-2.833 0.391-1.020 0.661-2.181 0.745-3.885 0.077-1.703 0.093-2.244 0.093-6.593s-0.021-4.891-0.093-6.593c-0.084-1.704-0.355-2.871-0.745-3.885-0.412-1.052-0.959-1.948-1.849-2.833-0.885-0.891-1.776-1.443-2.833-1.849-1.020-0.396-2.181-0.661-3.885-0.745-1.703-0.077-2.244-0.093-6.593-0.093zM16 2.88c4.271 0 4.781 0.021 6.469 0.093 1.557 0.073 2.405 0.333 2.968 0.553 0.751 0.291 1.276 0.635 1.844 1.197 0.557 0.557 0.901 1.088 1.192 1.839 0.22 0.563 0.48 1.411 0.553 2.968 0.072 1.688 0.093 2.199 0.093 6.469s-0.021 4.781-0.099 6.469c-0.084 1.557-0.344 2.405-0.563 2.968-0.303 0.751-0.641 1.276-1.199 1.844-0.563 0.557-1.099 0.901-1.844 1.192-0.556 0.22-1.416 0.48-2.979 0.553-1.697 0.072-2.197 0.093-6.479 0.093s-4.781-0.021-6.48-0.099c-1.557-0.084-2.416-0.344-2.979-0.563-0.76-0.303-1.281-0.641-1.839-1.199-0.563-0.563-0.921-1.099-1.197-1.844-0.224-0.556-0.48-1.416-0.563-2.979-0.057-1.677-0.084-2.197-0.084-6.459 0-4.26 0.027-4.781 0.084-6.479 0.083-1.563 0.339-2.421 0.563-2.979 0.276-0.761 0.635-1.281 1.197-1.844 0.557-0.557 1.079-0.917 1.839-1.199 0.563-0.219 1.401-0.479 2.964-0.557 1.697-0.061 2.197-0.083 6.473-0.083zM16 7.787c-4.541 0-8.213 3.677-8.213 8.213 0 4.541 3.677 8.213 8.213 8.213 4.541 0 8.213-3.677 8.213-8.213 0-4.541-3.677-8.213-8.213-8.213zM16 21.333c-2.948 0-5.333-2.385-5.333-5.333s2.385-5.333 5.333-5.333c2.948 0 5.333 2.385 5.333 5.333s-2.385 5.333-5.333 5.333zM26.464 7.459c0 1.063-0.865 1.921-1.923 1.921-1.063 0-1.921-0.859-1.921-1.921 0-1.057 0.864-1.917 1.921-1.917s1.923 0.86 1.923 1.917z">
+                                </path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </footer>
+            <div class="py-6 text-sm text-center dark:text-gray-600">
+                © 2024 Sphere Hive Co. All rights reserved.
+            </div>
+
+            <script>
+                // Camera handling
+                const video = document.getElementById("video");
+                const canvas = document.getElementById("canvas");
+                const startButton = document.getElementById("startCamera");
+                const captureButton = document.getElementById("captureImage");
+                const stopButton = document.getElementById("stopCamera");
+                let stream = null;
+
+                // Start camera
+                startButton.addEventListener("click", async () => {
+                    try {
+                        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                        video.srcObject = stream;
+                        video.classList.remove("hidden");
+                        captureButton.disabled = false;
+                        stopButton.disabled = false;
+                        startButton.disabled = true;
+                        await video.play();
+                    } catch (err) {
+                        showError("Unable to access camera. Please check permissions.");
+                    }
+                });
+
+                // Stop camera
+                stopButton.addEventListener("click", () => {
+                    if (stream) {
+                        stream.getTracks().forEach((track) => track.stop());
+                        video.classList.add("hidden");
+                        captureButton.disabled = true;
+                        stopButton.disabled = true;
+                        startButton.disabled = false;
+                    }
+                });
+
+                // Capture image
+                captureButton.addEventListener("click", () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    canvas.getContext("2d").drawImage(video, 0, 0);
+
+                    // Convert canvas to blob and create preview
+                    canvas.toBlob(
+                        (blob) => {
+                            handleImageSelection(blob);
+                        },
+                        "image/jpeg",
+                        0.8
+                    );
+
+                    // Stop camera after capture
+                    stopButton.click();
+                });
+
+                // File input handling
+                const fileInput = document.getElementById("fileInput");
+                fileInput.addEventListener("change", (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        handleImageSelection(file);
+                    }
+                });
+
+                // Handle image selection (both file upload and capture)
+                function handleImageSelection(file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        document.getElementById("preview").src = reader.result;
+                        document.getElementById("imagePreview").classList.remove("hidden");
+                    };
+                    reader.readAsDataURL(file);
+                }
+
+                // Form submission
+                document
+                    .getElementById("analyzeButton")
+                    .addEventListener("click", async () => {
+                        const imageFile = fileInput.files[0];
+                        const medicineName = document
+                            .getElementById("medicineName")
+                            .value.trim();
+
+                        if (!imageFile && !medicineName) {
+                            showError("Please provide an image or medicine name");
+                            return;
+                        }
+
+                        const formData = new FormData();
+                        if (imageFile) formData.append("image", imageFile);
+                        if (medicineName) formData.append("medicine_name", medicineName);
+
+                        try {
+                            showLoading(true);
+                            hideError();
+
+                            const response = await fetch("/analyze", {
+                                method: "POST",
+                                body: formData,
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                showResults(result.data);
+                            } else {
+                                showError(result.error);
+                            }
+                        } catch (error) {
+                            showError("An error occurred while analyzing the medicine");
+                        } finally {
+                            showLoading(false);
+                        }
+                    });
+
+                // Utility functions
+                function showLoading(show) {
+                    document
+                        .getElementById("loadingIndicator")
+                        .classList.toggle("hidden", !show);
+                    document.getElementById("analyzeButton").disabled = show;
+                }
+
+                function showError(message) {
+                    const errorDiv = document.getElementById("errorMessage");
+                    errorDiv.textContent = message;
+                    errorDiv.classList.remove("hidden");
+                }
+
+                function hideError() {
+                    document.getElementById("errorMessage").classList.add("hidden");
+                }
+
+                function showResults(data) {
+                    const resultsSection = document.getElementById("resultsSection");
+                    const medicineInfo = document.getElementById("medicineInfo");
+
+                    // Convert markdown to HTML
+                    medicineInfo.innerHTML = marked.parse(data);
+                    resultsSection.classList.remove("hidden");
+                }
+
+
+                // Text-to-speech functionality
+                let speechSynthesis = window.speechSynthesis;
+                let isPlaying = false;
+                let currentUtterance = null;
+
+                function toggleSpeech(text) {
+                    if (isPlaying) {
+                        stopSpeech();
+                    } else {
+                        startSpeech(text);
+                    }
+                }
+
+                function startSpeech(text) {
+                    // Clean up the text by removing markdown syntax
+                    const cleanText = text.replace(/[#*_`]/g, '');
+
+                    currentUtterance = new SpeechSynthesisUtterance(cleanText);
+
+                    // Use the selected voice if available
+                    if (window.selectedVoice) {
+                        currentUtterance.voice = window.selectedVoice;
+                    }
+
+                    // Configure speech settings
+                    currentUtterance.rate = 1.0;
+                    currentUtterance.pitch = 1.0;
+                    currentUtterance.volume = 1.0;
+
+                    // Update button state when speech ends
+                    currentUtterance.onend = () => {
+                        isPlaying = false;
+                        updateSpeakButton();
+                    };
+
+                    speechSynthesis.speak(currentUtterance);
+                    isPlaying = true;
+                    updateSpeakButton();
+                }
+
+                function stopSpeech() {
+                    speechSynthesis.cancel();
+                    isPlaying = false;
+                    updateSpeakButton();
+                }
+
+                function updateSpeakButton() {
+                    const button = document.getElementById('speakButton');
+                    const buttonText = document.getElementById('speakButtonText');
+
+                    if (isPlaying) {
+                        buttonText.textContent = 'Stop Reading';
+                        button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                        button.classList.add('bg-red-500', 'hover:bg-red-600');
+                    } else {
+                        buttonText.textContent = 'Read Analysis';
+                        button.classList.remove('bg-red-500', 'hover:bg-red-600');
+                        button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                    }
+                }
+
+                function showResults(data) {
+                    const resultsSection = document.getElementById('resultsSection');
+                    const medicineInfo = document.getElementById('medicineInfo');
+
+                    // Convert markdown to HTML
+                    medicineInfo.innerHTML = marked.parse(data);
+                    resultsSection.classList.remove('hidden');
+
+                    // Add click handler for speak button
+                    document.getElementById('speakButton').onclick = () => toggleSpeech(data);
+                }
+            </script>
+            
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/team-logo.jpg') }}" type="image/jpg">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="dark:bg-gray-100">
+      <!-- Header -->
+      <header class="p-4 dark:bg-gray-100 dark:text-gray-800">
+        <div class="container flex justify-between h-16 mx-auto">
+            <a href="/" aria-label="Back to homepage" class="flex items-center p-2">
+                <img src="https://i.ibb.co/F8c6pYJ/team-logo.jpg" alt="team-logo" class="w-[80px] h-25 rounded-full mt-6" />
+            </a>
+            <ul class="hidden space-x-3 md:flex">
+                <li><a href="why-us" class="flex items-center px-4">Why Us</a></li>
+                <li><a href="contact" class="flex items-center px-4">Contact Us</a></li>
+            </ul>
+            <button class="flex justify-end p-4 md:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+    <div class="p-8">
+        <h1 class="text-2xl"><b>Problem we are trying to solve:</b></h1>
+        <p>Accidental medication intake is a serious issue, especially for vulnerable groups like children, the elderly, and even young adults. <br> These individuals often struggle to find accurate, easy-to-understand information about the medications they are taking. <br> This problem is particularly concerning for elderly or disabled people living in care homes, who are at higher risk. <br> They may not be able to check their medications themselves and often receive less personalized care compared to other patients. <br> Similarly, youngsters, especially teens and young adults, may take medications carelessly or without fully understanding the risks. <br> To address this, we're focusing on preventing accidental medication overdoses by improving safety measures, using efficient and innovative tools to make sure medications are given correctly, and providing clear, accessible information for all age groups.</p>
+        <h1 class="text-2xl mt-10"><b>Solution:</b></h1>
+        <p>Our system allows you to simply snap a picture of a medicine or type in its name, and it will provide all the essential details about that medicine. From basic information to usage instructions, recommended dosage, safety precautions, side effects, manufacturer, and shelf life, we cover it all. This ensures you're taking the right dose and using the medicine correctly, helping you avoid accidental overuse.</p>
+    </div>
+</body>
+</html>
